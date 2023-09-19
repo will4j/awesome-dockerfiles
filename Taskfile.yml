@@ -1,0 +1,14 @@
+# https://taskfile.dev/installation/
+# https://taskfile.dev/usage/
+# https://taskfile.dev/styleguide/
+version: '3'
+
+vars:
+  BUILD_PLATFORM: linux/amd64
+  STABLE_DIFFUSION_WEBUI_TARGET: "will4j/stable-diffusion-webui:latest"
+
+tasks:
+  stable-diffusion-webui:build:
+    desc: build image of stable-diffusion-webui
+    dir: stable-diffusion-webui
+    cmd: docker build --platform={{.BUILD_PLATFORM}} -t {{.STABLE_DIFFUSION_WEBUI_TARGET}} -f Dockerfile .

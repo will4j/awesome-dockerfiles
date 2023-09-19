@@ -3,7 +3,22 @@ ARG BASE_IMAGE=nvidia/cuda:11.7.1-base-ubuntu22.04
 
 FROM ${BASE_IMAGE} as init-env
 ENV DEBIAN_FRONTEND noninteractive
-RUN sed -i "s@http://.*archive.ubuntu.com@https://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
+COPY <<EOF /etc/apt/sources.list
+# https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-updates main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-updates main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-backports main restricted universe multiverse
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-backports main restricted universe multiverse
+
+# deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-security main restricted universe multiverse
+# # deb-src https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ jammy-security main restricted universe multiverse
+
+deb http://security.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse
+# deb-src http://security.ubuntu.com/ubuntu/ jammy-security main restricted universe multiverse
+
+EOF
 RUN apt-get update -y && apt-get upgrade -y && apt-get install -y libgl1 libglib2.0-0 wget git git-lfs python3-pip python-is-python3 ffmpeg && rm -rf /var/lib/apt/lists/*
 
 FROM init-env as app-env
@@ -31,10 +46,7 @@ ENV CODEFORMER_REPO="https://gitee.com/gh-proxy/CodeFormer.git"
 ENV BLIP_REPO="https://gitee.com/gh-proxy/BLIP"
 RUN cd stable-diffusion-webui && python launch.py --skip-torch-cuda-test
 
-RUN pip install xformers
-RUN pip install numexpr
-RUN pip install rich
-RUN pip install pycloudflared
+RUN pip install xformers numexpr rich pycloudflared
 
 EXPOSE 7860
 
