@@ -5,10 +5,24 @@ version: '3'
 
 vars:
   BUILD_PLATFORM: linux/amd64
-  STABLE_DIFFUSION_WEBUI_TARGET: "will4j/stable-diffusion-webui:latest"
+  STABLE_DIFFUSION_WEBUI_TARGET: will4j/stable-diffusion-webui:latest
+  PYTORCH_1_12_1_TARGET: will4j/pytorch:1.12.1-cuda11.3-cudnn8-py39-runtime
+  PYTORCH_TF_1_12_1_TARGET: will4j/pytorch-tf:1.12.1-cuda11.3-cudnn8-py39-runtime
 
 tasks:
-  stable-diffusion-webui:build:
+  stable-diffusion-webui:latest:
     desc: build image of stable-diffusion-webui
     dir: stable-diffusion-webui
     cmd: docker build --platform={{.BUILD_PLATFORM}} -t {{.STABLE_DIFFUSION_WEBUI_TARGET}} -f Dockerfile .
+
+  pytorch:1.12.1-cuda11.3-cudnn8-py39-runtime:
+    desc: build image of pytorch 1.12.1
+    dir: pytorch
+    cmd: docker build --platform={{.BUILD_PLATFORM}} -t {{.PYTORCH_1_12_1_TARGET}} --build-arg PYTORCH_VERSION=v1.12.1 
+      -f Dockerfile .
+
+  pytorch-tf:1.12.1-cuda11.3-cudnn8-py39-runtime:
+    desc: build image of pytorch 1.12.1 with tensorflow 2.12.1
+    dir: pytorch-tensorflow
+    cmd: docker build --platform={{.BUILD_PLATFORM}} -t {{.PYTORCH_TF_1_12_1_TARGET}} --build-arg PYTORCH_VERSION=v1.12.1
+      --build-arg TENSORFLOW_VERSION=2.12.1 -f Dockerfile .
